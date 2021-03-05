@@ -1,0 +1,14 @@
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\RWS_XML_test\bin\Debug\RWS_XML_test.exe.config
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\RWS_XML_test\bin\Debug\RWS_XML_test.exe
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\RWS_XML_test\bin\Debug\RWS_XML_test.pdb
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\RWS_XML_test\obj\Debug\ABB_RWS_XML_data_processing.csprojAssemblyReference.cache
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\RWS_XML_test\obj\Debug\ABB_RWS_XML_data_processing.csproj.CoreCompileInputs.cache
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\RWS_XML_test\obj\Debug\RWS_XML_test.exe
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\RWS_XML_test\obj\Debug\RWS_XML_test.pdb
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\ABB_RWS_XML_data_processing_sulution\bin\Debug\RWS_XML_test.exe.config
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\ABB_RWS_XML_data_processing_sulution\bin\Debug\RWS_XML_test.exe
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\ABB_RWS_XML_data_processing_sulution\bin\Debug\RWS_XML_test.pdb
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\ABB_RWS_XML_data_processing_sulution\obj\Debug\ABB_RWS_XML_data_processing.csprojAssemblyReference.cache
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\ABB_RWS_XML_data_processing_sulution\obj\Debug\ABB_RWS_XML_data_processing.csproj.CoreCompileInputs.cache
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\ABB_RWS_XML_data_processing_sulution\obj\Debug\RWS_XML_test.exe
+C:\Users\romanp\Downloads\github_upload\ABB_BR\ABB_RWS_XML_data_processing\ABB_RWS_XML_data_processing_sulution\obj\Debug\RWS_XML_test.pdb
