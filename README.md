@@ -26,6 +26,10 @@ Link: https://developercenter.robotstudio.com/api/rwsApi/index.html
 
 ## Project Description:
 
+<p align="center">
+<img src=https://github.com/rparak/ABB_Robot_data_processing/blob/main/images/communication_scheme.png width="650" height="350">
+</p>
+
 ## Project Hierarchy:
 
 **Client JSON (C#) - Repositary [/ABB_Robot_data_processing/ABB_RWS_JSON/ABB_RWS_XML_data_processing/]:**
