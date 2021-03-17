@@ -26,6 +26,10 @@ Link: https://developercenter.robotstudio.com/api/rwsApi/index.html
 
 ## Project Description:
 
+The project is focused on a simple demonstration of client / server communication via RWS (Robot Web Services). In this case, it is a collaborative/industrial robot ABB (for example IRB 120 -> server) and the client is a C# application. An example of an application is reading data (joint / cartesian position) using multiple approaches. The application was tested on some of the robot types (ABB IRB 120 -> real hardware + simulation, ABB IRB 1200, etc.) 
+
+The application uses performance optimization using multi-threaded programming. Communication (C# application) can be used in Unity3D for digital twins / augmented reality or in other relevant applications.
+
 <p align="center">
 <img src=https://github.com/rparak/ABB_Robot_data_processing/blob/main/images/communication_scheme.png width="650" height="350">
 </p>
