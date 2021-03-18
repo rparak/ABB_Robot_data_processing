@@ -26,7 +26,7 @@ Link: https://developercenter.robotstudio.com/api/rwsApi/index.html
 
 ## Project Description:
 
-The project is focused on a simple demonstration of client / server communication via RWS (Robot Web Services). In this case, it is a industrial robot ABB IRB 120 (server), which communicates with the client via the C# application. An example of an application is reading data (Joint / Cartesian position) using multiple approaches (JSON -> Cartesian Position, XML -> Joint Position). However, it is possible to use JSON to read the joint position and XML to read the Cartesian position, or to use both in one approach (XML / JSON to read joints and Cartesian position). The application was tested on some of the robot types (ABB IRB 120 -> real hardware + simulation, ABB IRB 1200, etc.)
+The project is focused on a simple demonstration of client / server communication via RWS (Robot Web Services). In this case, it is a industrial robot ABB IRB 120 (server), which communicates with the client via the C# application. An example of an application is reading data (Joint / Cartesian position) using multiple approaches (JSON,  XML). However, it is possible to use JSON to read the joint position and XML to read the Cartesian position, or to use both in one approach (XML / JSON to read joints and Cartesian position). The application was tested on some of the robot types (ABB IRB 120 -> real hardware + simulation, ABB IRB 1200, etc.)
 
 The application uses performance optimization using multi-threaded programming. Communication (C# application) can be used in Unity3D for digital twins / augmented reality or in other relevant applications.
 
