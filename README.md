@@ -53,8 +53,8 @@ The project was realized at Institute of Automation and Computer Science, Brno U
 ## Example of reading Joint position and Cartesian position using different approaches (ABB IRB 120):
 
 <p align="center">
-<img src=https://github.com/rparak/UR_Robot_data_processing/blob/main/images/abb_1.PNG width="650" height="350">
-<img src=https://github.com/rparak/UR_Robot_data_processing/blob/main/images/abb_2.PNG width="650" height="350">
+<img src=https://github.com/rparak/ABB_Robot_data_processing/blob/main/images/abb_1.PNG width="650" height="350">
+<img src=https://github.com/rparak/ABB_Robot_data_processing/blob/main/images/abb_2.PNG width="650" height="350">
 </p>
 
 ## Contact Info:
