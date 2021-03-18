@@ -31,6 +31,7 @@ The project is focused on a simple demonstration of client / server communicatio
 The application uses performance optimization using multi-threaded programming. Communication (C# application) can be used in Unity3D for digital twins / augmented reality or in other relevant applications.
 
 Sample application in the Unity3D program (Digital-Twin):
+
 [ABB IRB 120 - Unity3D Robotics](https://github.com/rparak/Unity3D_Robotics_ABB)
 
 The project was realized at Institute of Automation and Computer Science, Brno University of Technology, Faculty of Mechanical Engineering (NETME Centre - Cybernetics and Robotics Division).
