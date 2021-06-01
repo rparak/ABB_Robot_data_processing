@@ -6,9 +6,11 @@
 ```bash
 ABB RobotStudio, Visual Studio (or something similar)
 ```
-ABB RS: https://new.abb.com/products/robotics/robotstudio/downloads
 
-Visual Studio: https://visualstudio.microsoft.com/downloads/
+| Software/Package      | Link                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------- |
+| ABB RobotStudio       | https://new.abb.com/products/robotics/robotstudio/downloads                                                     |
+| Visual Studio         | https://visualstudio.microsoft.com/downloads/                                         |
 
 **Programming Language:**
 ```bash
