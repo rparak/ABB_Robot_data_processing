@@ -44,13 +44,13 @@ The project was realized at Institute of Automation and Computer Science, Brno U
 
 ## Project Hierarchy:
 
-**Client JSON (C#) - Repositary [/ABB_Robot_data_processing/ABB_RWS_JSON/ABB_RWS_XML_data_processing/]:**
+**Client JSON (C#) - Repositary [/ABB_Robot_data_processing/ABB_RWS_JSON/]:**
 
 ```bash
 [ Main Program ] /Program.cs/
 ```
 
-**Client XML (C#) - Repositary [/ABB_Robot_data_processing/ABB_RWS_XML/ABB_RWS_XML_data_processing_sulution/]:**
+**Client XML (C#) - Repositary [/ABB_Robot_data_processing/ABB_RWS_XML/]:**
 
 ```bash
 [ Main Program ] /Program.cs/
