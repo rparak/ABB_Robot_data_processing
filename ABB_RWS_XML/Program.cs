@@ -35,7 +35,7 @@ using System.IO;
 using System.Xml;
 using System.Globalization;
 
-namespace ABB_RWS_XML_data_processing
+namespace ABB_RWS_Data_Processing_XML
 {
     class Program
     {
@@ -96,12 +96,17 @@ namespace ABB_RWS_XML_data_processing
                     if (read_state_rws == 0)
                     {
                         // Read Joint data (1 - 6)
-                        Console.WriteLine("Joint 1: {0}", robotBaseRotLink_ABB_j[1]);
+                        Console.WriteLine("J1: {0} | J2: {1} | J3: {2} | J4: {3} | J5: {4} | J6: {5}", 
+                                          robotBaseRotLink_ABB_j[0], robotBaseRotLink_ABB_j[1], robotBaseRotLink_ABB_j[2], 
+                                          robotBaseRotLink_ABB_j[3], robotBaseRotLink_ABB_j[4], robotBaseRotLink_ABB_j[5]);
                     }
                     else if (read_state_rws == 1)
                     {
                         // Read Cartesian data (X,Y,Z, Quaternion {q1 - q4})
-                        Console.WriteLine("Position X: {0}", robotBaseRotLink_ABB_c[0]);
+                        Console.WriteLine("X: {0} | Y: {1} | Z: {2} | Q1: {3} | Q2: {4} | Q3: {5} | Q4: {6}",
+                                          robotBaseRotLink_ABB_c[0], robotBaseRotLink_ABB_c[1], robotBaseRotLink_ABB_c[2],
+                                          robotBaseRotLink_ABB_c[3], robotBaseRotLink_ABB_c[4], robotBaseRotLink_ABB_c[5],
+                                          robotBaseRotLink_ABB_c[6]);
                     }
                     // Thread Sleep {100 ms}
                     Thread.Sleep(100);
@@ -150,7 +155,7 @@ namespace ABB_RWS_XML_data_processing
                 // get the system resource
                 Stream xml_joint = get_system_resource(ip_adr, target);
                 // display the system resource
-                display_data(xml_joint, target);  
+                display_data(xml_joint, target);
 
             }
         }
@@ -163,7 +168,7 @@ namespace ABB_RWS_XML_data_processing
             // Login: Default User; Password: robotics
             request.Credentials = n_credential;
             // don't use proxy, it's aussumed that the RC/VC is reachable without going via proxy 
-            request.Proxy = null; 
+            request.Proxy = null;
             request.Method = "GET";
             // re-use http session between requests 
             request.CookieContainer = c_cookie;
@@ -192,13 +197,13 @@ namespace ABB_RWS_XML_data_processing
                 {
                     // Joint (1 - 6) -> Read RWS XML
                     // optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString()
-                    robotBaseRotLink_ABB_j[0] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_j[1] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_j[2] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_j[3] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_j[4] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j5']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_j[5] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j6']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    
+                    robotBaseRotLink_ABB_j[0] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+                    robotBaseRotLink_ABB_j[1] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+                    robotBaseRotLink_ABB_j[2] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+                    robotBaseRotLink_ABB_j[3] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+                    robotBaseRotLink_ABB_j[4] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j5']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+                    robotBaseRotLink_ABB_j[5] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j6']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+
                     // Thread Sleep {2 ms}
                     Thread.Sleep(2);
                 }
@@ -211,15 +216,15 @@ namespace ABB_RWS_XML_data_processing
                 {
                     // x, y, z {Target positions} -> Read RWS XML
                     // optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString()
-                    robotBaseRotLink_ABB_c[0] = double.Parse(optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_c[1] = double.Parse(optNode.SelectSingleNode("ns:span[@class='y']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_c[2] = double.Parse(optNode.SelectSingleNode("ns:span[@class='z']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    robotBaseRotLink_ABB_c[0] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+                    robotBaseRotLink_ABB_c[1] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='y']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+                    robotBaseRotLink_ABB_c[2] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='z']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
                     // q1, q2, q3, q4 {Orientation} -> Read RWS XML
                     // optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString()
-                    robotBaseRotLink_ABB_c[3] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_c[4] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_c[5] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    robotBaseRotLink_ABB_c[6] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    robotBaseRotLink_ABB_c[3] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 6);
+                    robotBaseRotLink_ABB_c[4] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='q2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 6);
+                    robotBaseRotLink_ABB_c[5] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='q3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 6);
+                    robotBaseRotLink_ABB_c[6] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='q4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 6);
 
                     // Thread Sleep {2 ms}
                     Thread.Sleep(2);
