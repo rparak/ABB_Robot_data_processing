@@ -33,7 +33,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 
-namespace ABB_RWS_JSON_data_processing
+namespace ABB_RWS_Data_Processing_JSON
 {
     class Program
     {
@@ -65,7 +65,7 @@ namespace ABB_RWS_JSON_data_processing
             // Robot - Cartesian address {Web}
             json_address_cartesian = "/rw/rapid/tasks/T_ROB1/motion?resource=robtarget&json=1";
             // Read state {0 -> Joint, 1 -> Cartesian}
-            read_state_rws = 0;
+            read_state_rws = 1;
 
             // Set Json address
             if (read_state_rws == 0)
@@ -96,12 +96,17 @@ namespace ABB_RWS_JSON_data_processing
                         if (read_state_rws == 0)
                         {
                             // Read Joint data (1 - 6)
-                            Console.WriteLine("Joint 1: {0}", robotBaseRotLink_ABB_j[0]);
+                            Console.WriteLine("J1: {0} | J2: {1} | J3: {2} | J4: {3} | J5: {4} | J6: {5}",
+                                              robotBaseRotLink_ABB_j[0], robotBaseRotLink_ABB_j[1], robotBaseRotLink_ABB_j[2],
+                                              robotBaseRotLink_ABB_j[3], robotBaseRotLink_ABB_j[4], robotBaseRotLink_ABB_j[5]);
                         }
                         else if (read_state_rws == 1)
                         {
                             // Read Cartesian data (X,Y,Z, Quaternion {q1 - q4})
-                            Console.WriteLine("Position X: {0}", robotBaseRotLink_ABB_c[0]);
+                            Console.WriteLine("X: {0} | Y: {1} | Z: {2} | Q1: {3} | Q2: {4} | Q3: {5} | Q4: {6}",
+                                              robotBaseRotLink_ABB_c[0], robotBaseRotLink_ABB_c[1], robotBaseRotLink_ABB_c[2],
+                                              robotBaseRotLink_ABB_c[3], robotBaseRotLink_ABB_c[4], robotBaseRotLink_ABB_c[5],
+                                              robotBaseRotLink_ABB_c[6]);
                         }
                     }
                     // Thread Sleep {100 ms}
@@ -146,7 +151,7 @@ namespace ABB_RWS_JSON_data_processing
         {
             var handler = new HttpClientHandler { Credentials = new NetworkCredential("Default User", "robotics") };
             // disable the proxy, the controller is connected on same subnet as the PC 
-            handler.Proxy = null;  
+            handler.Proxy = null;
             handler.UseProxy = false;
 
             // Send a request continue when complete
@@ -176,24 +181,24 @@ namespace ABB_RWS_JSON_data_processing
                                 if (read_state == 0)
                                 {
                                     // Joint {1 .. 6} -> Read RWS JSON
-                                    robotBaseRotLink_ABB_j[0] = service.j1;
-                                    robotBaseRotLink_ABB_j[1] = service.j2;
-                                    robotBaseRotLink_ABB_j[2] = service.j3;
-                                    robotBaseRotLink_ABB_j[3] = service.j4;
-                                    robotBaseRotLink_ABB_j[4] = service.j5;
-                                    robotBaseRotLink_ABB_j[5] = service.j6;
+                                    robotBaseRotLink_ABB_j[0] = Math.Round((double)service.j1, 2);
+                                    robotBaseRotLink_ABB_j[1] = Math.Round((double)service.j2, 2);
+                                    robotBaseRotLink_ABB_j[2] = Math.Round((double)service.j3, 2);
+                                    robotBaseRotLink_ABB_j[3] = Math.Round((double)service.j4, 2);
+                                    robotBaseRotLink_ABB_j[4] = Math.Round((double)service.j5, 2);
+                                    robotBaseRotLink_ABB_j[5] = Math.Round((double)service.j6, 2);
                                 }
-                                else if(read_state == 1)
+                                else if (read_state == 1)
                                 {
                                     // TCP {X, Y, Z} -> Read RWS JSON
-                                    robotBaseRotLink_ABB_c[0] = service.x;
-                                    robotBaseRotLink_ABB_c[1] = service.y;
-                                    robotBaseRotLink_ABB_c[2] = service.z;
+                                    robotBaseRotLink_ABB_c[0] = Math.Round((double)service.x, 2);
+                                    robotBaseRotLink_ABB_c[1] = Math.Round((double)service.y, 2);
+                                    robotBaseRotLink_ABB_c[2] = Math.Round((double)service.z, 2);
                                     // Quaternion {q1 .. q4} -> Read RWS JSON
-                                    robotBaseRotLink_ABB_c[3] = service.q1;
-                                    robotBaseRotLink_ABB_c[4] = service.q2;
-                                    robotBaseRotLink_ABB_c[5] = service.q3;
-                                    robotBaseRotLink_ABB_c[6] = service.q4;
+                                    robotBaseRotLink_ABB_c[3] = Math.Round((double)service.q1, 6);
+                                    robotBaseRotLink_ABB_c[4] = Math.Round((double)service.q2, 6);
+                                    robotBaseRotLink_ABB_c[5] = Math.Round((double)service.q3, 6);
+                                    robotBaseRotLink_ABB_c[6] = Math.Round((double)service.q4, 6);
                                 }
 
                                 // Thread Sleep {200 ms}
