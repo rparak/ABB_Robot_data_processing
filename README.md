@@ -66,5 +66,17 @@ The project was realized at Institute of Automation and Computer Science, Brno U
 ## Contact Info:
 Roman.Parak@outlook.com
 
+## Citation (BibTex)
+```bash
+@misc{RomanParak_DT_ABB,
+  author = {Roman Parak},
+  title = {Data collection from the ABB controller using Robot Web Services (RWS)},
+  year = {2020-2021},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/rparak/ABB-RobotStudio-YUMI/}}
+}
+```
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
