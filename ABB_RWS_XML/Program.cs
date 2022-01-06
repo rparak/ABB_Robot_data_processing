@@ -122,7 +122,7 @@ namespace ABB_RWS_Data_Processing_XML
 
                     // Get the system resource
                     Stream source_data = Get_System_Resource(ABB_Stream_Data.ip_address, ABB_Stream_Data.xml_target);
-
+                    // Current data streaming from the source page
                     Stream_Data(source_data);
 
                     // t_{1}: Timer stop.
