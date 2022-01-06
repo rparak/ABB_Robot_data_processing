@@ -23,148 +23,131 @@ Github   : https://github.com/rparak
 File Name: Program.cs
 ****************************************************************************/
 
-// ------------------------------------------------------------------------------------------------------------------------//
-// ----------------------------------------------------- LIBRARIES --------------------------------------------------------//
-// ------------------------------------------------------------------------------------------------------------------------//
-
-// -------------------- System -------------------- //
+// System Lib.
 using System;
 using System.Threading;
 using System.Net;
 using System.IO;
 using System.Xml;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace ABB_RWS_Data_Processing_XML
 {
+    public static class ABB_Stream_Data
+    {
+        // IP Port Number and IP Address
+        public static string ip_address;
+        //  The target of reading the data: jointtarget / robtarget
+        public static string xml_target = "";
+        // Comunication Speed (ms)
+        public static int time_step;
+        // Joint Space:
+        //  Orientation {J1 .. J6} (°)
+        public static double[] J_Orientation = new double[6];
+        // Cartesian Space:
+        //  Position {X, Y, Z} (mm)
+        public static double[] C_Position = new double[3];
+        //  Orientation {Quaternion} (-):
+        public static double[] C_Orientation = new double[4];
+    }
+
     class Program
     {
-        // -------------------- Thread -------------------- //
-        static Thread rws_read_Thread;
-        // -------------------- Cookie Container -------------------- //
-        static CookieContainer c_cookie = new CookieContainer();
-        // -------------------- Network Credential -------------------- //
-        static NetworkCredential n_credential = new NetworkCredential("Default User", "robotics");
-        // -------------------- String -------------------- //
-        static string ip_address;
-        static string xml_target;
-        // -------------------- Bool -------------------- //
-        static bool rws_r_while;
-        // -------------------- Double -------------------- //
-        static double[] robotBaseRotLink_ABB_c = { 0f, 0f, 0f, 0f, 0f, 0f, 0f };
-        static double[] robotBaseRotLink_ABB_j = { 0f, 0f, 0f, 0f, 0f, 0f };
-        // -------------------- Int -------------------- //
-        static int read_state_rws;
-
-        // ------------------------------------------------------------------------------------------------------------------------//
-        // ------------------------------------------------ MAIN FUNCTION {Cyclic} ------------------------------------------------//
-        // ------------------------------------------------------------------------------------------------------------------------//
-
         static void Main(string[] args)
         {
-            // ------------------------ Initialization { RWS - Robot Web Services} ------------------------//
-            // Robot IP Address
-            ip_address = "127.0.0.1";
-            // Read state {0 -> Joint, 1 -> Cartesian}
-            read_state_rws = 0;
-            // Set Json address
-            if (read_state_rws == 0)
+            // Initialization {Robot Web Services ABB}
+            //  Stream Data:
+            ABB_Stream_Data.ip_address = "127.0.0.1";
+            //  The target of reading the data: jointtarget / robtarget
+            ABB_Stream_Data.xml_target = "jointtarget";
+            //  Communication speed (ms)
+            ABB_Stream_Data.time_step = 2;
+
+            // Start Stream {Universal Robots TCP/IP}
+            ABB_Stream ABB_Stream_Robot_XML = new ABB_Stream();
+            ABB_Stream_Robot_XML.Start();
+
+            Console.WriteLine("[INFO] Stop (y):");
+            // Stop communication
+            string stop_rs = Convert.ToString(Console.ReadLine());
+
+            if (stop_rs == "y")
             {
-                // Robot - Joint target {Web}
-                xml_target = "jointtarget";
+                if (ABB_Stream_Data.xml_target == "jointtarget")
+                {
+                    Console.WriteLine("Joint Space: Orientation (radian)");
+                    Console.WriteLine("J1: {0} | J2: {1} | J3: {2} | J4: {3} | J5: {4} | J6: {5}",
+                                       ABB_Stream_Data.J_Orientation[0], ABB_Stream_Data.J_Orientation[1], ABB_Stream_Data.J_Orientation[2],
+                                       ABB_Stream_Data.J_Orientation[3], ABB_Stream_Data.J_Orientation[4], ABB_Stream_Data.J_Orientation[5]);
+                }
+                else if (ABB_Stream_Data.xml_target == "robtarget")
+                {
+                    Console.WriteLine("Cartesian Space: Position (metres), Orientation (radian):");
+                    Console.WriteLine("X: {0} | Y: {1} | Z: {2} | Q1: {3} | Q2: {4} | Q3: {5} | Q4: {6}",
+                                       ABB_Stream_Data.C_Position[0], ABB_Stream_Data.C_Position[1], ABB_Stream_Data.C_Position[2],
+                                       ABB_Stream_Data.C_Orientation[0], ABB_Stream_Data.C_Orientation[1], ABB_Stream_Data.C_Orientation[2], ABB_Stream_Data.C_Orientation[3]);
+                }
+
+                // Destroy ABB {Stream}
+                ABB_Stream_Robot_XML.Destroy();
+
+                // Application quit
+                Environment.Exit(0);
             }
-            else if (read_state_rws == 1)
-            {
-                // Robot - Cartesian target {Web}
-                xml_target = "robtarget";
+        }
 
-            }
+    }
+    class ABB_Stream
+    {
+        // Initialization of Class variables
+        //  Thread
+        private Thread robot_thread = null;
+        private bool exit_thread = false;
+        // Robot Web Services (RWS): XML Communication
+        private CookieContainer c_cookie = new CookieContainer();
+        private NetworkCredential n_credential = new NetworkCredential("Default User", "robotics");
 
-            // ------------------------ Threading Block { RWS - Read Data } ------------------------//
-            rws_r_while = true;
-            rws_read_Thread = new Thread(() => RWS_Service_read_thread_function("http://" + ip_address, xml_target));
-            rws_read_Thread.IsBackground = true;
-            rws_read_Thread.Start();
-
-            // ------------------------ Main Block { Read data from the Robot (ABB) } ------------------------//
+        public void ABB_Stream_Thread()
+        {
             try
             {
-                // -------------------- Main Cycle {While} -------------------- //
-                while (true)
+                // Initialization timer
+                var t = new Stopwatch();
+
+                while (exit_thread == false)
                 {
-                    // -------------------- Read State {Check} -------------------- //
-                    if (read_state_rws == 0)
+                    // t_{0}: Timer start.
+                    t.Start();
+
+                    // Get the system resource
+                    Stream source_data = Get_System_Resource(ABB_Stream_Data.ip_address, ABB_Stream_Data.xml_target);
+
+                    Stream_Data(source_data);
+
+                    // t_{1}: Timer stop.
+                    t.Stop();
+
+                    // Recalculate the time: t = t_{1} - t_{0} -> Elapsed Time in milliseconds
+                    if (t.ElapsedMilliseconds < ABB_Stream_Data.time_step)
                     {
-                        // Read Joint data (1 - 6)
-                        Console.WriteLine("J1: {0} | J2: {1} | J3: {2} | J4: {3} | J5: {4} | J6: {5}", 
-                                          robotBaseRotLink_ABB_j[0], robotBaseRotLink_ABB_j[1], robotBaseRotLink_ABB_j[2], 
-                                          robotBaseRotLink_ABB_j[3], robotBaseRotLink_ABB_j[4], robotBaseRotLink_ABB_j[5]);
+                        Thread.Sleep(ABB_Stream_Data.time_step - (int)t.ElapsedMilliseconds);
                     }
-                    else if (read_state_rws == 1)
-                    {
-                        // Read Cartesian data (X,Y,Z, Quaternion {q1 - q4})
-                        Console.WriteLine("X: {0} | Y: {1} | Z: {2} | Q1: {3} | Q2: {4} | Q3: {5} | Q4: {6}",
-                                          robotBaseRotLink_ABB_c[0], robotBaseRotLink_ABB_c[1], robotBaseRotLink_ABB_c[2],
-                                          robotBaseRotLink_ABB_c[3], robotBaseRotLink_ABB_c[4], robotBaseRotLink_ABB_c[5],
-                                          robotBaseRotLink_ABB_c[6]);
-                    }
-                    // Thread Sleep {100 ms}
-                    Thread.Sleep(100);
+
+                    // Reset (Restart) timer.
+                    t.Restart();
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-            }
-            finally
-            {
-                // Quit function
-                Application_Quit();
+                Console.WriteLine("Communication Problem: {0}", e);
             }
         }
 
-        // ------------------------------------------------------------------------------------------------------------------------//
-        // -------------------------------------------------------- FUNCTIONS -----------------------------------------------------//
-        // ------------------------------------------------------------------------------------------------------------------------//
-
-        // -------------------- Abort Threading Blocks -------------------- //
-        static void Application_Quit()
+        Stream Get_System_Resource(string host, string target)
         {
-            try
-            {
-                // Stop - threading while (XML)
-                rws_r_while = false;
-
-                // Abort threading block {RWS XML -> read data}
-                if (rws_read_Thread.IsAlive == true)
-                {
-                    rws_read_Thread.Abort();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        // ------------------------ Threading Block { RWS - Robot Web Services (READ) } ------------------------//
-        static void RWS_Service_read_thread_function(string ip_adr, string target)
-        {
-            while (rws_r_while)
-            {
-                // get the system resource
-                Stream xml_joint = get_system_resource(ip_adr, target);
-                // display the system resource
-                display_data(xml_joint, target);
-
-            }
-        }
-
-        // ------------------------ RWS aux. function { Get System Resource } ------------------------//
-        static Stream get_system_resource(string host, string target)
-        {
-            // ip address + xml address + target {joint, cartesian}
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri(host + "/rw/rapid/tasks/T_ROB1/motion?resource=" + target));
+            // http:// + ip address + xml address + target {joint, cartesian}
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri("http://" + host + "/rw/rapid/tasks/T_ROB1/motion?resource=" + target));
             // Login: Default User; Password: robotics
             request.Credentials = n_credential;
             // don't use proxy, it's aussumed that the RC/VC is reachable without going via proxy 
@@ -176,60 +159,77 @@ namespace ABB_RWS_Data_Processing_XML
             return response.GetResponseStream();
         }
 
-        // ------------------------ RWS aux. function { Read Data } ------------------------//
-        static void display_data(Stream xmldata, string target)
+        void Stream_Data(Stream source_data)
         {
-            // XmlNode -> Initialization Document
-            XmlDocument doc = new XmlDocument();
+            // Xml Node: Initialization Document
+            XmlDocument xml_doc = new XmlDocument();
             // Load XML data
-            doc.Load(xmldata);
+            xml_doc.Load(source_data);
 
             // Create an XmlNamespaceManager for resolving namespaces.
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(xml_doc.NameTable);
 
             nsmgr.AddNamespace("ns", "http://www.w3.org/1999/xhtml");
 
-            if (target == "jointtarget")
+            if (ABB_Stream_Data.xml_target == "jointtarget")
             {
                 // -------------------- Read State {Joint (1 - 6)} -------------------- //
-                XmlNodeList optionNodes = doc.SelectNodes("//ns:li[@class='rapid-jointtarget']", nsmgr);
+                XmlNodeList optionNodes = xml_doc.SelectNodes("//ns:li[@class='rapid-jointtarget']", nsmgr);
                 foreach (XmlNode optNode in optionNodes)
                 {
                     // Joint (1 - 6) -> Read RWS XML
                     // optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString()
-                    robotBaseRotLink_ABB_j[0] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
-                    robotBaseRotLink_ABB_j[1] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
-                    robotBaseRotLink_ABB_j[2] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
-                    robotBaseRotLink_ABB_j[3] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
-                    robotBaseRotLink_ABB_j[4] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j5']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
-                    robotBaseRotLink_ABB_j[5] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='j6']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
-
-                    // Thread Sleep {2 ms}
-                    Thread.Sleep(2);
+                    ABB_Stream_Data.J_Orientation[0] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.J_Orientation[1] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.J_Orientation[2] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.J_Orientation[3] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.J_Orientation[4] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j5']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.J_Orientation[5] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j6']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 }
             }
-            else if (target == "robtarget")
+            else if (ABB_Stream_Data.xml_target == "robtarget")
             {
                 // -------------------- Read State {Cartesian (X,Y,Z, Quaternion {q1 - q4})} -------------------- //
-                XmlNodeList optionNodes = doc.SelectNodes("//ns:li[@class='rapid-robtarget']", nsmgr);
+                XmlNodeList optionNodes = xml_doc.SelectNodes("//ns:li[@class='rapid-robtarget']", nsmgr);
                 foreach (XmlNode optNode in optionNodes)
                 {
                     // x, y, z {Target positions} -> Read RWS XML
                     // optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString()
-                    robotBaseRotLink_ABB_c[0] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
-                    robotBaseRotLink_ABB_c[1] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='y']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
-                    robotBaseRotLink_ABB_c[2] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='z']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 2);
+                    ABB_Stream_Data.C_Position[0] = double.Parse(optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.C_Position[1] = double.Parse(optNode.SelectSingleNode("ns:span[@class='y']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.C_Position[2] = double.Parse(optNode.SelectSingleNode("ns:span[@class='z']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                     // q1, q2, q3, q4 {Orientation} -> Read RWS XML
                     // optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString()
-                    robotBaseRotLink_ABB_c[3] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 6);
-                    robotBaseRotLink_ABB_c[4] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='q2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 6);
-                    robotBaseRotLink_ABB_c[5] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='q3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 6);
-                    robotBaseRotLink_ABB_c[6] = Math.Round(double.Parse(optNode.SelectSingleNode("ns:span[@class='q4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat), 6);
-
-                    // Thread Sleep {2 ms}
-                    Thread.Sleep(2);
+                    ABB_Stream_Data.C_Orientation[0] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.C_Orientation[1] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.C_Orientation[2] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                    ABB_Stream_Data.C_Orientation[3] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 }
             }
+        }
+
+        public void Start()
+        {
+            exit_thread = false;
+            // Start a thread to stream ABB Robot
+            robot_thread = new Thread(new ThreadStart(ABB_Stream_Thread));
+            robot_thread.IsBackground = true;
+            robot_thread.Start();
+        }
+        public void Stop()
+        {
+            exit_thread = true;
+            // Start a thread
+            if (robot_thread.IsAlive == true)
+            {
+                Thread.Sleep(100);
+            }
+        }
+        public void Destroy()
+        {
+            // Stop a thread (Robot Web Services communication)
+            Stop();
+            Thread.Sleep(100);
         }
     }
 }
