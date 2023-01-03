@@ -64,7 +64,7 @@ namespace ABB_RWS_Data_Processing_XML
             //  Communication speed (ms)
             ABB_Stream_Data.time_step = 2;
 
-            // Start Stream {Universal Robots TCP/IP}
+            // Start Stream {ABB Robot Web Services - XML}
             ABB_Stream ABB_Stream_Robot_XML = new ABB_Stream();
             ABB_Stream_Robot_XML.Start();
 
