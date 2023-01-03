@@ -61,7 +61,7 @@ namespace ABB_RWS_Data_Processing_JSON
             //  The target of reading the data: jointtarget / robtarget
             ABB_Stream_Data.json_target = "robtarget";
             //  Communication speed (ms)
-            ABB_Stream_Data.time_step = 2;
+            ABB_Stream_Data.time_step = 12;
 
             // Start Stream {Universal Robots TCP/IP}
             ABB_Stream ABB_Stream_Robot_JSON = new ABB_Stream();
