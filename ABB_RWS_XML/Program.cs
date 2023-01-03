@@ -24,10 +24,7 @@ File Name: Program.cs
 ****************************************************************************/
 
 // System Lib.
-using System;
-using System.Threading;
 using System.Net;
-using System.IO;
 using System.Xml;
 using System.Diagnostics;
 using System.Globalization;
@@ -60,7 +57,7 @@ namespace ABB_RWS_Data_Processing_XML
             //  Stream Data:
             ABB_Stream_Data.ip_address = "127.0.0.1";
             //  The target of reading the data: jointtarget / robtarget
-            ABB_Stream_Data.xml_target = "jointtarget";
+            ABB_Stream_Data.xml_target = "robtarget";
             //  Communication speed (ms)
             ABB_Stream_Data.time_step = 2;
 
@@ -174,38 +171,39 @@ namespace ABB_RWS_Data_Processing_XML
             if (ABB_Stream_Data.xml_target == "jointtarget")
             {
                 // -------------------- Read State {Joint (1 - 6)} -------------------- //
-                XmlNodeList optionNodes = xml_doc.SelectNodes("//ns:li[@class='rapid-jointtarget']", nsmgr);
-                foreach (XmlNode optNode in optionNodes)
-                {
-                    // Joint (1 - 6) -> Read RWS XML
-                    // optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString()
-                    ABB_Stream_Data.J_Orientation[0] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.J_Orientation[1] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.J_Orientation[2] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.J_Orientation[3] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.J_Orientation[4] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j5']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.J_Orientation[5] = double.Parse(optNode.SelectSingleNode("ns:span[@class='j6']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                }
+                XmlNodeList xml_node = xml_doc.SelectNodes("//ns:li[@class='rapid-jointtarget']", nsmgr);
+
+                // Joint (1 - 6) -> Read RWS XML
+                // optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString()
+                ABB_Stream_Data.J_Orientation[0] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.J_Orientation[1] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.J_Orientation[2] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.J_Orientation[3] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.J_Orientation[4] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j5']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.J_Orientation[5] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j6']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+
             }
             else if (ABB_Stream_Data.xml_target == "robtarget")
             {
                 // -------------------- Read State {Cartesian (X,Y,Z, Quaternion {q1 - q4})} -------------------- //
-                XmlNodeList optionNodes = xml_doc.SelectNodes("//ns:li[@class='rapid-robtarget']", nsmgr);
-                foreach (XmlNode optNode in optionNodes)
-                {
-                    // x, y, z {Target positions} -> Read RWS XML
-                    // optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString()
-                    ABB_Stream_Data.C_Position[0] = double.Parse(optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.C_Position[1] = double.Parse(optNode.SelectSingleNode("ns:span[@class='y']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.C_Position[2] = double.Parse(optNode.SelectSingleNode("ns:span[@class='z']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    // q1, q2, q3, q4 {Orientation} -> Read RWS XML
-                    // optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString()
-                    ABB_Stream_Data.C_Orientation[0] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.C_Orientation[1] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.C_Orientation[2] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                    ABB_Stream_Data.C_Orientation[3] = double.Parse(optNode.SelectSingleNode("ns:span[@class='q4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
-                }
+                XmlNodeList xml_node = xml_doc.SelectNodes("//ns:li[@class='rapid-robtarget']", nsmgr);
+
+                // x, y, z {Target positions} -> Read RWS XML
+                // optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString()
+                ABB_Stream_Data.C_Position[0] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.C_Position[1] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='y']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.C_Position[2] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='z']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                // q1, q2, q3, q4 {Orientation} -> Read RWS XML
+                // optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString()
+                ABB_Stream_Data.C_Orientation[0] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.C_Orientation[1] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='q2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.C_Orientation[2] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='q3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
+                ABB_Stream_Data.C_Orientation[3] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='q4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
             }
+
+            Console.WriteLine("X: {0} | Y: {1} | Z: {2} | Q1: {3} | Q2: {4} | Q3: {5} | Q4: {6}",
+                   ABB_Stream_Data.C_Position[0], ABB_Stream_Data.C_Position[1], ABB_Stream_Data.C_Position[2],
+                   ABB_Stream_Data.C_Orientation[0], ABB_Stream_Data.C_Orientation[1], ABB_Stream_Data.C_Orientation[2], ABB_Stream_Data.C_Orientation[3]);
         }
 
         public void Start()
