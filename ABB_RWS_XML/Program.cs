@@ -174,7 +174,6 @@ namespace ABB_RWS_Data_Processing_XML
                 XmlNodeList xml_node = xml_doc.SelectNodes("//ns:li[@class='rapid-jointtarget']", nsmgr);
 
                 // Joint (1 - 6) -> Read RWS XML
-                // optNode.SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString()
                 ABB_Stream_Data.J_Orientation[0] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 ABB_Stream_Data.J_Orientation[1] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 ABB_Stream_Data.J_Orientation[2] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='j3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
@@ -189,21 +188,15 @@ namespace ABB_RWS_Data_Processing_XML
                 XmlNodeList xml_node = xml_doc.SelectNodes("//ns:li[@class='rapid-robtarget']", nsmgr);
 
                 // x, y, z {Target positions} -> Read RWS XML
-                // optNode.SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString()
                 ABB_Stream_Data.C_Position[0] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='x']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 ABB_Stream_Data.C_Position[1] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='y']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 ABB_Stream_Data.C_Position[2] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='z']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 // q1, q2, q3, q4 {Orientation} -> Read RWS XML
-                // optNode.SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString()
                 ABB_Stream_Data.C_Orientation[0] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='q1']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 ABB_Stream_Data.C_Orientation[1] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='q2']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 ABB_Stream_Data.C_Orientation[2] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='q3']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
                 ABB_Stream_Data.C_Orientation[3] = double.Parse(xml_node[0].SelectSingleNode("ns:span[@class='q4']", nsmgr).InnerText.ToString(), CultureInfo.InvariantCulture.NumberFormat);
             }
-
-            Console.WriteLine("X: {0} | Y: {1} | Z: {2} | Q1: {3} | Q2: {4} | Q3: {5} | Q4: {6}",
-                   ABB_Stream_Data.C_Position[0], ABB_Stream_Data.C_Position[1], ABB_Stream_Data.C_Position[2],
-                   ABB_Stream_Data.C_Orientation[0], ABB_Stream_Data.C_Orientation[1], ABB_Stream_Data.C_Orientation[2], ABB_Stream_Data.C_Orientation[3]);
         }
 
         public void Start()
