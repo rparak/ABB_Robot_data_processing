@@ -59,7 +59,7 @@ namespace ABB_RWS_Data_Processing_XML
             //  The target of reading the data: jointtarget / robtarget
             ABB_Stream_Data.xml_target = "robtarget";
             //  Communication speed (ms)
-            ABB_Stream_Data.time_step = 2;
+            ABB_Stream_Data.time_step = 12;
 
             // Start Stream {ABB Robot Web Services - XML}
             ABB_Stream ABB_Stream_Robot_XML = new ABB_Stream();
