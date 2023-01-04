@@ -202,11 +202,9 @@ namespace ABB_RWS_Data_Processing_JSON
         public void Stop()
         {
             exit_thread = true;
-            // Start a thread
-            if (robot_thread.IsAlive == true)
-            {
-                Thread.Sleep(100);
-            }
+            // Stop a thread
+            Thread.Sleep(100);
+            robot_thread.Abort();
         }
         public void Destroy()
         {
