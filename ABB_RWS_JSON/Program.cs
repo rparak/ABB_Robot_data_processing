@@ -204,7 +204,6 @@ namespace ABB_RWS_Data_Processing_JSON
             exit_thread = true;
             // Stop a thread
             Thread.Sleep(100);
-            robot_thread.Abort();
         }
         public void Destroy()
         {
