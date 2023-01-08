@@ -28,7 +28,9 @@ Link: https://developercenter.robotstudio.com/api/rwsApi/index.html
 
 ## Project Description:
 
-The project is focused on a simple demonstration of client-server communication via RWS (Robot Web Services). In this case, it is a industrial robot ABB IRB 120 (server), which communicates with the client via the C# application. An example of an application is reading data (Joint / Cartesian position) using multiple approaches (JSON,  XML). However, it is possible to use JSON to read the joint position and XML to read the Cartesian position, or to use both in one approach (XML / JSON to read joints and Cartesian position). The application was tested on some of the robot types (ABB IRB 120 -> real hardware + simulation, ABB IRB 140, etc.)
+The project is focused on a simple demonstration of client-server communication via RWS (Robot Web Services). In this case, it is a industrial robot ABB IRB 120 (server), which communicates with the client via the C# application. An example of an application is reading data (Joint / Cartesian position) using multiple approaches (JSON,  XML). However, it is possible to use JSON to read the joint position and XML to read the Cartesian position, or to use both in one approach (XML / JSON to read joints and Cartesian position). The project also includes data control through RWS, which is located in the Control folder.
+
+The application was tested on some of the robot types (ABB IRB 120 -> real hardware + simulation, ABB IRB 140, etc.)
 
 The application uses performance optimization using multi-threaded programming. Communication (C# application) can be used in Unity3D for digital twins / augmented reality or in other relevant applications.
 
@@ -44,16 +46,23 @@ The project was realized at the Institute of Automation and Computer Science, Br
 
 ## Project Hierarchy:
 
-**Client JSON (C#) - Repositary [/ABB_Robot_data_processing/Stream/ABB_RWS_JSON/]:**
+**Client JSON (C#) - Repository [/ABB_Robot_data_processing/Stream/ABB_RWS_JSON/]:**
 
 ```bash
 [ Main Program ] /Program.cs/
 ```
 
-**Client XML (C#) - Repositary [/ABB_Robot_data_processing/Stream/ABB_RWS_XML/]:**
+**Client XML (C#) - Repository [/ABB_Robot_data_processing/Stream/ABB_RWS_XML/]:**
 
 ```bash
 [ Main Program ] /Program.cs/
+```
+
+**Client XML (C#) - Repository [/ABB_Robot_data_processing/Control/]:**
+
+```bash
+[ Main Program C# ] /Program.cs/
+[ RAPID program ABB RS] /T_ROB_1
 ```
 
 ## Example of reading Joint position and Cartesian position using different approaches (ABB IRB 120):
