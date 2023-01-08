@@ -80,7 +80,7 @@ Roman.Parak@outlook.com
 @misc{RomanParak_DT_ABB,
   author = {Roman Parak},
   title = {Data collection from the ABB controller using Robot Web Services (RWS)},
-  year = {2020-2021},
+  year = {2020-2022},
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/rparak/ABB_Robot_data_processing/}}
